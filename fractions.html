@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Fraction Calculator</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- link href="css/bootstrap.min.css" rel="stylesheet" -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    &nbsp;
+    <div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>
+					Fraction calculator
+				</h2>
+				<div class="form-group" id="dataentry">
+					<label for="equation">Enter an equation using fractions (using a/b style...)</label>
+					<input type="text" class="form-control" id="equation" placeholder="e.g. 2/3 + 1/2">
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon"><a href="#" onClick="calculate()">=</a></span>					
+					<span id="result" class="form-control"></span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+	<script src="./fraction.min.js"></script>    
+    <script>
+    	$("#equation").on("keyup", function(event){ if( event.which==13 ) { calculate(); } } );
+    	
+    	function calculate() {
+    		// try to read in the equation.
+    		// start by looking for brackets, indices, multiply, divide, add, subtract
+    		var equation = $("#equation").val().trim();
+    		if( equation == "" ) {
+    			$("#dataentry").addClass("has-error");
+    			alert('nothing to solve!');
+    			return;
+    		} 
+    		
+    		try {
+				var result = solve( equation );
+				$("#result").text( result );
+				$("#dataentry").removeClass("has-error");				
+			} catch( e ) {
+				$("#dataentry").addClass("has-error");
+				alert( e );
+			}
+    	}
+    	
+    	function get2Terms( eq, p1 ) {
+    			var p0 = p1-1;
+    			while( p0>=0 && eq.charAt(p0)==' ' )	p0--;
+    			while( "0123456789/".indexOf(eq[p0])>=0 && p0>=0 ) p0--;
+    			p0++;
+    			var t1 = eq.slice(p0,p1).trim();;
+    			
+    			var p2 = p1+1;
+    			while( p2<eq.length && eq.charAt(p2)==' ' ) p2++;
+    			while( "0123456789/".indexOf(eq[p2])>=0 && p2<eq.length ) p2++;
+    			var t2 = eq.slice(p1+1,p2).trim();
+    			
+    			//console.log("get2Terms(" + eq + " @ " + p1 + ") => <<"+t1+">>" + eq.charAt(p1) +"<<"+t2+">>");
+    			if( t1=="" || t2=="" ) throw ("Invalid expression at " + p1);
+    			return [p0,t1,t2,p2];
+		}
+		    	
+    	function solve( eq ) {
+    		// solve brackets...
+    		while( eq.indexOf('(')>=0 ) {
+    			var p1 = eq.indexOf('(');
+    			var p2 = p1;
+    			var idx = 1;
+    			while( idx > 0 && p2<eq.length ) {
+    				p2++;
+    				if( eq[p2]==')' ) idx--;
+    				if( eq[p2]=='(' ) idx++;
+    			}
+    			if( p2>=eq.length ) {
+    				console.log("ERROR: Unbalanced brackets at " + p1);
+    				throw("Unbalanced brackets");
+    			}
+    			
+    			var bracket = eq.slice( p1+1, p2 );
+    			var brsoln  = solve(bracket);
+    			console.log("Solve: bracket at " + eq.slice(p1,p2+1) + " => " + brsoln );
+    			eq = eq.slice(0,p1) + brsoln + eq.slice(p2+1);
+    			console.log("  => : " + eq );
+    		}
+    		if( eq.indexOf(')')>=0 ) {
+    			throw ("Unbalanced brackets");
+    		}
+    		
+    		// indexes??
+    		while( eq.indexOf('^')>=0 ) {
+    			var p1 = eq.indexOf('^');
+    			var terms = get2Terms(eq, p1);
+    			
+    			//console.log('     : pow at ' + p1);
+    			//console.log('     : terms [[' + terms[1] + ']]+[[' + terms[2] + ']]');
+    			
+    			var f1 = new Fraction(terms[1]);
+    			var f2 = new Fraction(terms[2]);
+    			var f3 = f1.pow( f2 );
+    			console.log("Solve: " + f1.toFraction() + " ^ " + f2.toFraction() + " = " + f3.toFraction() );
+    			
+    			eq = eq.slice(0,terms[0]) + f3.toFraction() + eq.slice(terms[3]);
+    			console.log("  => : " + eq );
+    		}
+    		
+    		// multiply ...
+    		while( eq.indexOf('*')>=0 ) {
+    			var p1 = eq.indexOf('*');
+    			var terms = get2Terms(eq, p1);
+    			
+    			//console.log('     : multiply at ' + p1);
+    			//console.log('     : terms [[' + terms[1] + ']]x[[' + terms[2] + ']]');
+    			
+    			var f1 = new Fraction(terms[1]);
+    			var f2 = new Fraction(terms[2]);
+    			var f3 = f1.mul( f2 );
+    			console.log("Solve: " + f1.toFraction() + " x " + f2.toFraction() + " = " + f3.toFraction() );
+    			
+    			eq = eq.slice(0,terms[0]) + f3.toFraction() + eq.slice(terms[3]);
+    			console.log("  => : " + eq );
+    		}
+    		
+    		/*
+    		while( eq.indexOf('/')>=0 ) {
+    			//solveDivide(equation);
+    		}
+    		*/
+    		
+    		while( eq.indexOf('+')>=0 ) {
+    			var p1 = eq.indexOf('+');
+    			var terms = get2Terms(eq, p1);
+    			
+    			//console.log('     : multiply at ' + p1);
+    			//console.log('     : terms [[' + terms[1] + ']]x[[' + terms[2] + ']]');
+    			
+    			var f1 = new Fraction(terms[1]);
+    			var f2 = new Fraction(terms[2]);
+    			var f3 = f1.add( f2 );
+    			console.log("Solve: " + f1.toFraction() + " + " + f2.toFraction() + " = " + f3.toFraction() );
+    			
+    			eq = eq.slice(0,terms[0]) + f3.toFraction() + eq.slice(terms[3]);
+    			console.log("  => : " + eq );
+    		}
+    		while( eq.indexOf('-')>=0 ) {
+    			var p1 = eq.indexOf('-');
+    			var terms = get2Terms(eq, p1);
+    			
+    			//console.log('     : multiply at ' + p1);
+    			//console.log('     : terms [[' + terms[1] + ']]x[[' + terms[2] + ']]');
+    			
+    			var f1 = new Fraction(terms[1]);
+    			var f2 = new Fraction(terms[2]);
+    			var f3 = f1.sub( f2 );
+    			console.log("Solve: " + f1.toFraction() + " - " + f2.toFraction() + " = " + f3.toFraction() );
+    			
+    			eq = eq.slice(0,terms[0]) + f3.toFraction() + eq.slice(terms[3]);
+    			console.log("  => : " + eq );
+    		}
+    		
+    		// we should now have just a number...
+    		
+    		return new Fraction(eq).toFraction();
+    	}
+    	
+    </script>
+  </body>
+</html>
+
+
+
