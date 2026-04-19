@@ -1,0 +1,169 @@
+/* Layout styles */
+.fixedTable {
+    table-layout: fixed;
+    white-space: nowrap;
+    --margin: 0 auto;
+}
+.puzzleSpace {
+    border: 1px solid #444;
+    background-color: rgba(255,255,255,0.2);
+}
+.puzzleSpace.invalid {
+    background-color: palevioletred;
+}
+.puzzleBlank {
+    padding: 0.5em;
+    background-color: #ccc;
+}
+.puzzleClue {
+    width: 3em;
+    height: 3em;
+    background-color: #ccc;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M0 0 L100 100' stroke='black' stroke-width='2' /></svg>");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%, auto;
+    border: 1px solid #444;
+}
+.clueDown {
+    position: relative;
+    top: 0.7em;
+    height: 1.1em;
+    float: left;
+    text-align: left;
+    text-overflow: clip;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 0 0 0.2em 0.1em;
+    margin: 0;
+}
+.clueRight {
+    position: relative;
+    top: -0.7em;
+    height: 1.1em;
+    float: right;
+    text-align: right;
+    text-overflow: clip;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 0.1em 0.2em 0 0;
+    margin: 0;
+}
+.unknown {
+    padding: 0.5em;
+    color: white;
+    background-color:  red;
+}
+
+.puzzleCellContainer {
+    position: relative;
+}
+.puzzleInput {
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%; 
+    color: blue;
+    border: none;
+    font-size: 1.75em;
+    font-weight: bolder;
+    text-align: center; 
+    white-space: nowrap;
+    overflow: hidden;
+    resize: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+.puzzleInput:focus {
+    background-color:  rgba(255, 246, 119, 0.5);
+}
+.puzzleInput.hints {
+    font-size: 1em;
+    font-weight: normal;
+}
+.puzzleCellHintsTable {
+    width: 100%;
+    visibility: hidden;
+    z-index: -1;
+}
+td.hintDigit {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-weight: lighter;
+    text-align: center;
+    color: darkslategray;
+}
+td.hintDigit.removed {
+    color: red;
+    font-weight: bold;
+}
+
+/* Playing styles */
+.puzzleSpace.solveConstraint {
+    color: blue;
+    background-color: lightyellow;
+}
+.puzzleSpace.solveStep {
+    color: red;
+    background-color: yellow;
+}
+.puzzleSpace:hover {
+    border: 1px solid blue;
+}
+.puzzleClue:hover {
+    border: 1px solid red;
+}
+.explanation {
+    width: 80%;
+    color: darkslategrey;
+    margin-top: 2em;
+    margin-right: 1em;
+    padding: 0.1em;
+    border: inset;
+}
+.hover {
+    color: black;
+    background-color: lightgoldenrodyellow;
+    border: 1px solid black;
+    position: absolute;
+    z-index: 2;
+}
+.hover .title {
+    color: white;
+    background-color: darkslategrey;
+    padding: 0.1em 0.25em 0 0.25em;
+    margin: 0;
+    font-weight: normal;
+}
+.hover .body {
+    padding: .1em .25em;
+    font-weight: lighter;
+}
+.hover .body .invalidcombo {
+    color: grey;
+}
+
+
+
+/* Editing styles */
+.puzzleSpace.selected, .puzzleClue.selected {
+    background-color: chartreuse;
+}
+.puzzleClue.clueEntryHoriz {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M0 0 H100 V100 Z' fill='fuchsia' /></svg>");
+}
+.puzzleClue.clueEntryVert {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M0 0 V100 H100 Z' fill='fuchsia' /></svg>");
+}
+.controlsGroup {
+    border-style: groove;
+    margin-right: 20;
+    padding: 0.25em;
+}
+
+
+
+
+

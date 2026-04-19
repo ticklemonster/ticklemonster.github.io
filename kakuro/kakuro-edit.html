@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>Kakuro helper</title>
+    <link rel="stylesheet" href="kakuro.css" />
+
+</head>
+<body>
+    <h1>Kakuro Editor</h1>
+    <div id='puzzle'>
+        <table id='puzzleTable' class='fixedTable' cellspacing='0'>
+        </table>
+        <hr/>
+        <div id='controls'>
+            <span class='controlsGroup'>Dimensions: 
+                <input id='inputRows' type='number' value='9' min=0 max=64 onchange='changeRows(this)'/>
+                 x 
+                <input id='inputCols' type='number' value='9' min=0 max=64 onchange='changeCols(this)' />
+            </span>
+            <span class='controlsGroup'>
+                Clues: <input type='text' id='cluestxt' length='80' aria-multiline="true"/>
+                <button id='importBtn' onclick='parseClues()'>Load</button>
+                <button id='clearBtn' onclick='clearPuzzle()'>Clear</button>
+            </span>
+            <hr/>
+            <button id='playBtn' onclick='playPuzzle()'>Play!</button>
+
+        </div>
+    </div>
+    <!-- Load the script components -->
+    <script src="scripts/kakuro-edit.js"></script>    
+</body>
